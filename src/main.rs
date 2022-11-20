@@ -1,14 +1,7 @@
-use clap::Parser;
-
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    #[arg(required = true)]
-    URL: String,
-}
+mod bits;
 
 fn main() {
-    let args = Args::parse();
+    let b = bits::string_to_qr_bits("AC-42".to_string());
 
-    println!("{}", args.URL)
+    println!("Bits: {:?}", b);
 }
