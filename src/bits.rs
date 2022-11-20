@@ -68,7 +68,7 @@ pub fn string_to_qr_bits(input: String) -> BitVec {
     }
     
     // Loop through string and insert bytes
-    let mut b_index: u32 = 24;
+    let mut b_index: u32 = 23;
     let mut s_index: u32 = 0;
     while s_index < d - 1 {
 
@@ -85,6 +85,7 @@ pub fn string_to_qr_bits(input: String) -> BitVec {
                 _ => panic!("Not encodable as Alpha Numeric!"),
             };
         }
+        println!("value: {}", c_1);
 
         let mut c_2: u8 = input.as_bytes()[s_index as usize + 1];
 
@@ -92,18 +93,20 @@ pub fn string_to_qr_bits(input: String) -> BitVec {
             c_2 = c_2 - 48;
         }
         else {
+            println!("decode: {}", str::from_utf8(&vec![c_2]).unwrap());
             match char_values.get(&str::from_utf8(&vec![c_2]).unwrap()) {
                 Some(&val) => c_2 = val,
                 _ => panic!("Not encodable as Alpha Numeric!"),
             };
         }
+        println!("value: {}", c_2);
+
 
         // Calculate the value we are adding to our bit vec.
         let insert_value: u32 = c_1 as u32 * 45 + c_2 as u32;
 
 
         for i in 0..11 {
-            println!("{} / {} % {}", insert_value, (2u16.pow(i)), 2);
             if insert_value / 2u32.pow(i) % 2 == 1 {
                 bv.set((b_index - i) as usize, true);
             }
@@ -120,15 +123,15 @@ pub fn string_to_qr_bits(input: String) -> BitVec {
             c = c - 48;
         }
         else {
-            match char_values.get(&c.to_string().to_uppercase().as_str()) {
+            match char_values.get(&str::from_utf8(&vec![c]).unwrap()) {
                 Some(&val) => c = val,
                 _ => panic!("Not encodable as Alpha Numeric!"),
             };
         }
 
         for i in 0..6 {
-            if c / 2u8.pow(i) % 2 == 1 {
-                bv.set((d - 1 - i) as usize, true);
+            if c as u32 / 2u32.pow(i) % 2 == 1 {
+                bv.set((size - 1 - i) as usize, true);
             }
         }
     }
